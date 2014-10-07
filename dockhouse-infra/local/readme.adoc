@@ -1,4 +1,40 @@
 = How to use local environement
 Doc Writer <wilcox.benoit@gmail.com>
 
-lorem ipsum
+The developement environement provisioning is based on :
+
+* Docker (https://www.docker.com/)
+* Fig (http://www.fig.sh/)
+* Vagrant (https://www.vagrantup.com/) _(not necessary for Linux user)_
+
+the goal is to provide servers used by the application (tomcat, mongo, redis, ...)
+
+=== Requirements
+
+[format="csv", options="header"]
+|===
+OS,Tools
+Linux,Docker and fig
+OS X,Vagrant
+Windows,Vagrant
+|===
+_Maybe we can use boot2docker instead of vagrant_
+
+=== Launch environment
+
+go to the `dockhouse-infra/local` folder
+
+[source,bash]
+.Windows/Mac OS
+----
+vagrant up
+----
+
+[source,bash]
+.Linux
+----
+fig up
+----
+
+NOTE: Vagrant is configure to forward ports with your machine. For example,
+you can access ton mongodb with http://localhost:27017
