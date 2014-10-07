@@ -4,3 +4,5 @@ Doc Writer <wilcox.benoit@gmail.com>
 == How to use local environement
 
 lorem ipsum
+
+NOTE: test de note
