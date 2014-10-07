@@ -1,20 +1,4 @@
-= Dockhouse
+= How to use local environement
 Doc Writer <wilcox.benoit@gmail.com>
-
-== How to use local environement
-
-lorem ipsum
-
-[NOTE]
-====
-test de note edledededd.
-
-.A list
-- one
-- two
-- three
-
-Another paragraph.
-====
 
 lorem ipsum
