@@ -3,9 +3,9 @@ Doc Writer <wilcox.benoit@gmail.com>
 
 The developement environement provisioning is based on :
 
-* Docker (https://www.docker.com/)
-* Fig (http://www.fig.sh/)
-* Vagrant (https://www.vagrantup.com/) _(not necessary for Linux user)_
+* *Docker* (https://www.docker.com/)
+* *Fig* (http://www.fig.sh/)
+* *Vagrant* (https://www.vagrantup.com/) _(not necessary for Linux user)_
 
 the goal is to provide servers used by the application (tomcat, mongo, redis, ...)
 
@@ -29,6 +29,7 @@ go to the `dockhouse-infra/local` folder
 ----
 vagrant up
 ----
+_Vagrantfile install docker and fig and run_ `fig up` _automatically_
 
 [source,bash]
 .Linux
