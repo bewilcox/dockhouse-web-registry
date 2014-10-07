@@ -5,4 +5,16 @@ Doc Writer <wilcox.benoit@gmail.com>
 
 lorem ipsum
 
-NOTE: test de note
+[NOTE]
+====
+test de note edledededd.
+
+.A list
+- one
+- two
+- three
+
+Another paragraph.
+====
+
+lorem ipsum
