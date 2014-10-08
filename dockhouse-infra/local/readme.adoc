@@ -4,38 +4,79 @@ Doc Writer <wilcox.benoit@gmail.com>
 The developement environement provisioning is based on :
 
 * *Docker* (https://www.docker.com/)
-* *Fig* (http://www.fig.sh/)
-* *Vagrant* (https://www.vagrantup.com/) _(not necessary for Linux user)_
+* *Vagrant* (https://www.vagrantup.com/)
 
 the goal is to provide servers used by the application (tomcat, mongo, redis, ...)
 
 === Requirements
 
-[format="csv", options="header"]
-|===
-OS,Tools
-Linux,Docker and fig
-OS X,Vagrant
-Windows,Vagrant
-|===
-_Maybe we can use boot2docker instead of vagrant_
+You need install the latest version of *Vagrant* and *VirtualBox*.
+
+_Maybe we can use boot2docker or Fig instead of vagrant, but for a Windows environement is more complex and without value_
 
 === Launch environment
 
 go to the `dockhouse-infra/local` folder
 
 [source,bash]
-.Windows/Mac OS
 ----
-vagrant up
+> vagrant up --provider=docker
 ----
-_Vagrantfile install docker and fig and run_ `fig up` _automatically_
 
+NOTE: *_--provider=docker_* is only mandatory for the first launch. +
+Then you can only use *_vagrant up_*
+
+
+To verify the status of the servers : +
 [source,bash]
-.Linux
 ----
-fig up
+> vagrant status
 ----
 
-NOTE: Vagrant is configure to forward ports with your machine. For example,
-you can access ton mongodb with http://localhost:27017
+You should see something like this : +
+----
+Current machine states:
+mongo                 running (docker)
+----
+
+=== Description
+
+The description of the environement use 2 Vagrantfile.
+
+* Vagrantfile
+* Vagrantfile.proxy
+
+The first is to describe all the Docker containers we want to use. +
+for example :
+[source,ruby]
+.Vagrantfile
+----
+Vagrant.configure("2") do |config|
+
+  # MongoDB local server
+  config.vm.define "mongo" do |mongo|
+    mongo.vm.provider "docker" do |d|
+      d.image = "mongo"
+      d.ports = ["27017:27017"]
+      d.vagrant_vagrantfile = "./Vagrantfile.proxy"
+    end
+  end
+end
+----
+
+The second one is to describe the Proxy VM to use to run the containers +
+for example :
+[source,ruby]
+.Vagrantfile.proxy
+----
+Vagrant.configure("2") do |config|
+  config.vm.box = "precise64"
+  config.vm.provision "docker"
+  config.vm.provision "shell", inline:
+    "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+
+  config.vm.network :forwarded_port, guest: 27017, host: 27017
+end
+----
+
+NOTE: "forwarded_port" allow to map the localhost port to the port container

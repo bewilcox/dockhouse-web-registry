@@ -2,29 +2,14 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # Configuration
-  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
-  config.vm.box = "precise64"
 
-  config.vm.define "dockhousedev" do |dockhousedev|
-    dockhousedev.vm.hostname = "dockhouse-dev"
-    dockhousedev.vm.network :private_network, ip: "192.168.29.111"
-    dockhousedev.vm.provider "virtualbox" do |v|
-      v.memory = 1024   
+  # MongoDB local server
+  config.vm.define "mongo" do |mongo|
+  	mongo.vm.hostname="mongo-dev"
+    mongo.vm.provider "docker" do |d|
+      d.image = "mongo"
+      d.ports = ["27017:27017"]
+      d.vagrant_vagrantfile = "./Vagrantfile.proxy"
     end
-    # Installation of curl, git and docker
-    dockhousedev.vm.provision :shell, :inline => "sudo apt-get install -y curl git; curl -s https://get.docker.io/ubuntu/ | sudo sh"
-    # Installation of fig
-    dockhousedev.vm.provision :shell, :inline => "sudo curl -L https://github.com/docker/fig/releases/download/0.5.2/linux > /usr/local/bin/fig"
-    dockhousedev.vm.provision :shell, :inline => "sudo chmod +x /usr/local/bin/fig"
-
-    # Copy the env dev installation file (based on Docker)
-    dockhousedev.vm.provision "file", source: "./fig.yml", destination: "./fig.yml"
-
-    # Launch environnement
-    dockhousedev.vm.provision :shell, :inline => "sudo fig up"
-
-    # Port forward for MongoDB Access
-    dockhousedev.vm.network "forwarded_port", guest: 27107, host: 27107
   end
 end  
