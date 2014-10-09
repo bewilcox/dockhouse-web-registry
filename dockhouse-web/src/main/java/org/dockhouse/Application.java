@@ -2,8 +2,6 @@ package org.dockhouse;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -11,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @ComponentScan
 @EnableAutoConfiguration
-public class Application extends SpringBootServletInitializer {
+public class Application {
 
     private static Class<Application> entryPointClass = Application.class;
 
@@ -21,8 +19,4 @@ public class Application extends SpringBootServletInitializer {
         app.run(args);
     }
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(entryPointClass);
-    }
 }
