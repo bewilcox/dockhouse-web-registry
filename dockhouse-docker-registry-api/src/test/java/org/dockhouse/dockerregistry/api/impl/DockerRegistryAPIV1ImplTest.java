@@ -3,18 +3,19 @@ package org.dockhouse.dockerregistry.api.impl;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Optional;
+
+import static org.junit.Assert.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 
 public class DockerRegistryAPIV1ImplTest {
@@ -81,5 +82,81 @@ public class DockerRegistryAPIV1ImplTest {
         // Assert
         assertFalse(isAlive);
 
+    }
+
+    @Test
+    public void testGetVersionSuccessful() throws Exception {
+
+        String registryURL1 = "http://localhost:5000";
+        String expectedVersion = "0.8.1";
+        DockerRegistryAPIV1Impl dockerRegistryAPIV1 = new DockerRegistryAPIV1Impl(registryURL1);
+
+        // Mocking service
+        MockRestServiceServer mockServer  = MockRestServiceServer.createServer(this.restTemplate);
+        dockerRegistryAPIV1.setRestTemplate(this.restTemplate);
+
+        // Mock build
+        DefaultResponseCreator responseCreator = withSuccess("true", MediaType.APPLICATION_JSON);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Docker-Registry-Version", expectedVersion);
+        responseCreator.headers(headers);
+        mockServer
+                .expect(requestTo(dockerRegistryAPIV1.getVersionedURL() + "_ping"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(responseCreator);
+
+        // Call service
+        Optional<String> version = dockerRegistryAPIV1.getVersion();
+        mockServer.verify();
+
+        // Assert
+        assertTrue(version.isPresent());
+        assertEquals(expectedVersion, version.get());
+    }
+
+    @Test
+    public void testGetVersionFailed_withError() throws Exception {
+        String registryURL1 = "http://localhost:5000";
+        DockerRegistryAPIV1Impl dockerRegistryAPIV1 = new DockerRegistryAPIV1Impl(registryURL1);
+
+        // Mocking service
+        MockRestServiceServer mockServer  = MockRestServiceServer.createServer(this.restTemplate);
+        dockerRegistryAPIV1.setRestTemplate(this.restTemplate);
+
+        // Mock build
+        mockServer
+                .expect(requestTo(dockerRegistryAPIV1.getVersionedURL() + "_ping"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withServerError());
+
+        // Call service
+        Optional<String> version = dockerRegistryAPIV1.getVersion();
+        mockServer.verify();
+
+        // Assert
+        assertFalse(version.isPresent());
+    }
+
+    @Test
+    public void testGetVersionFailed_withNoInfoInHeader() throws Exception {
+        String registryURL1 = "http://localhost:5000";
+        DockerRegistryAPIV1Impl dockerRegistryAPIV1 = new DockerRegistryAPIV1Impl(registryURL1);
+
+        // Mocking service
+        MockRestServiceServer mockServer  = MockRestServiceServer.createServer(this.restTemplate);
+        dockerRegistryAPIV1.setRestTemplate(this.restTemplate);
+
+        // Mock build
+        mockServer
+                .expect(requestTo(dockerRegistryAPIV1.getVersionedURL() + "_ping"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess("true", MediaType.APPLICATION_JSON));
+
+        // Call service
+        Optional<String> version = dockerRegistryAPIV1.getVersion();
+        mockServer.verify();
+
+        // Assert
+        assertFalse(version.isPresent());
     }
 }

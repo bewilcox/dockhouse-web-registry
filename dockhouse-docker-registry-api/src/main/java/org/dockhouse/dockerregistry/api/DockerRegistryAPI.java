@@ -6,6 +6,16 @@ package org.dockhouse.dockerregistry.api;
  */
 public interface DockerRegistryAPI {
 
+    /**
+     * Return the API version
+     * @return API Version
+     */
+    public String getAPIVersion();
+
+    /**
+     * Return the status of the private registry
+     * @return
+     */
     boolean isAlive();
 
 }

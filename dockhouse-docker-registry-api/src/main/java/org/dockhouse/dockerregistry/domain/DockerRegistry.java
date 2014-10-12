@@ -7,25 +7,25 @@ import org.dockhouse.dockerregistry.api.DockerRegistryAPI;
  */
 public class DockerRegistry {
 
-    private int version;
+    private String version;
     private String host;
     private String ip;
 
     // API
     private DockerRegistryAPI dockerRegistryAPI;
 
-    public DockerRegistry(int version, String host, String ip, DockerRegistryAPI dockerRegistryAPI) {
+    public DockerRegistry(String version, String host, String ip, DockerRegistryAPI dockerRegistryAPI) {
         this.version = version;
         this.host = host;
         this.ip = ip;
         this.dockerRegistryAPI = dockerRegistryAPI;
     }
 
-    public int getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(int version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
